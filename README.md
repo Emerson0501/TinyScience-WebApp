@@ -1,2 +1,2 @@
-# TinyScience-Frontend
-FrontedTiny Science
+# TinyScience-WebApp
+Full Stack project 
