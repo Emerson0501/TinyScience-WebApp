@@ -1,44 +1,51 @@
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTag, faImage, faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 
-const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
+const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => {
     const [categoriaData, setCategoriaData] = useState({
         name: "",
         description: "",
-        image: ""
+        image: "",
     });
+
+    // Inicializar con los datos recibidos
+    useEffect(() => {
+        if (categoria) {
+            setCategoriaData({
+                name: categoria.name || "",
+                description: categoria.description || "",
+                image: categoria.image || "",
+            });
+        }
+    }, [categoria]);
 
     const handleChange = (e) => {
         setCategoriaData({
             ...categoriaData,
             [e.target.name]: e.target.value,
-        })
-    }
+        });
+    };
 
     const handleSubmit = async () => {
         try {
-            const res = await fetch("/api/categorias",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(categoriaData),
-                })
+            const res = await fetch(`/api/categorias/${categoria._id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(categoriaData),
+            });
 
-            if (!res.ok) {
-                throw new Error("Error al crear la categoría")
-            }
+            if (!res.ok) throw new Error("Error al actualizar la categoría");
 
             const data = await res.json();
-            onCategoriaAdded(data)
+            onCategoriaUpdated(data);
             closeModal();
         } catch (error) {
-            console.error("Error creando la materia:", error);
+            console.error("❌ Error actualizando la categoría:", error);
         }
-    }
+    };
 
     return (
         <AnimatePresence>
@@ -46,14 +53,14 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0  flex justify-center items-center z-50"
+                className="fixed inset-0 flex justify-center items-center z-50 bg-black/40"
             >
                 <motion.div
                     initial={{ scale: 0.95, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="w-full max-w-md bg-white rounded-xl shadow-xl p-6 relative"
+                    className="w-full max-w-md h-[80vh] bg-white rounded-xl shadow-xl p-6 relative overflow-y-auto"
                 >
                     {/* Botón Cerrar */}
                     <button
@@ -69,7 +76,7 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             className="text-pink-500 text-4xl mb-2"
                         />
                         <h2 className="text-center text-xl font-bold text-gray-700">
-                            Agregar Categoría
+                            Editar Categoría
                         </h2>
 
                         {/* Campo Nombre */}
@@ -81,7 +88,6 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             <input
                                 type="text"
                                 name="name"
-                                placeholder="Nombre de la categoría"
                                 value={categoriaData.name}
                                 onChange={handleChange}
                                 className="w-full border text-black rounded p-2"
@@ -97,7 +103,6 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             </label>
                             <textarea
                                 name="description"
-                                placeholder="Descripción de la categoría"
                                 value={categoriaData.description}
                                 onChange={handleChange}
                                 className="w-full border text-black rounded p-2"
@@ -105,7 +110,7 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             />
                         </div>
 
-                        {/* Campo URL de Imagen */}
+                        {/* Campo Imagen */}
                         <div className="w-full mt-4">
                             <label className="flex items-center text-sm font-medium text-gray-600 mb-1">
                                 <FontAwesomeIcon icon={faImage} className="mr-2" />
@@ -114,14 +119,13 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             <input
                                 type="text"
                                 name="image"
-                                placeholder="https://..."
                                 value={categoriaData.image}
                                 onChange={handleChange}
                                 className="w-full border text-black rounded p-2"
                             />
                         </div>
 
-                        {/* Vista previa de imagen */}
+                        {/* Vista previa */}
                         {categoriaData.image && (
                             <img
                                 src={categoriaData.image}
@@ -142,7 +146,7 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
                                 onClick={handleSubmit}
                             >
-                                Agregar
+                                Guardar cambios
                             </button>
                         </div>
                     </div>
@@ -152,4 +156,4 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
     );
 };
 
-export default ModalAgregarCategoria;
+export default ModalEditarCategoria;

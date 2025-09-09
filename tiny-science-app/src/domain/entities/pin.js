@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import { CategoriaModel } from "./categoria"; // 👈 importa el modelo de categorías
 
 const PinSchema = new mongoose.Schema(
   {
@@ -25,9 +25,12 @@ const PinSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    isActive: {
+      type: Boolean,
+      default: true, 
+    },
   },
   { timestamps: true }
 );
 
-export const PinModel = mongoose.models.Pin || mongoose.model("Pin", PinSchema)
-
+export const PinModel = mongoose.models.Pin || mongoose.model("Pin", PinSchema);

@@ -2,14 +2,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialReactTable, useMaterialReactTable } from "material-react-table";
 import { FaPlus } from 'react-icons/fa';
-import ModalAgregarCategoria from "@/components/admin/categorias/modalAgregarCategoria";
-import ModalImagenCategoria from "@/components/admin/categorias/modalImagen";
+import ModalAgregarCategoria from "@/components/admin/categorias/modalAgregar";
+import ModalImagenCategoria from "@/components/modalImagen";
+import ModalEditarCategoria from "@/components/admin/categorias/modalEditar";
+import ModalEliminarCategoria from "@/components/admin/categorias/modalEliminar";
 
 export default function CategoriaAdmin() {
     const [categorias, setCategorias] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
     const [selectedCategoria, setSelectedCategoria] = useState(null);
+
     const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [imagenModal, setImagenModal] = useState(null);
 
     useEffect(() => {
@@ -29,8 +35,14 @@ export default function CategoriaAdmin() {
     }, []);
 
 
-    const handleAddMateriaClick = () => setShowAddModal(true);
 
+    const handleEdit = (id) => {
+        console.log("Editar categoría con id:", id);
+    };
+
+    const handleDeleteClick = (categoria) => {
+        console.log("Eliminar categoría:", categoria);
+    };
 
     const columns = useMemo(() => [
         {
@@ -49,8 +61,7 @@ export default function CategoriaAdmin() {
                 return url ? (
                     <button
                         onClick={() => setImagenModal(url)}
-                        className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm bg-amber-300 text-white rounded-lg hover:bg-amber-400 transition"
-D                    >
+                        className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm bg-amber-300 text-white rounded-lg hover:bg-amber-400 transition"                   >
                         Ver imagen
                     </button>
                 ) : (
@@ -75,17 +86,25 @@ D                    >
                     <button
                         type="button"
                         className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition"
-                        onClick={() => handleEdit(row.original._id)}
+
+                        onClick={() => {
+                            setSelectedCategoria(row.original);
+                            setShowEditModal(true);
+                        }}
                     >
                         Editar
                     </button>
                     <button
                         type="button"
                         className="px-2 py-1 sm:px-4 sm:py-2 text-xs sm:text-sm bg-red-500 text-white rounded-lg hover:bg-red-700 transition"
-                        onClick={() => handleDeleteClick(row.original)}
+                        onClick={() => {
+                            setSelectedCategoria(row.original);
+                            setShowDeleteModal(true);
+                        }}
                     >
                         Eliminar
                     </button>
+
                 </div>
             ),
         },
@@ -97,7 +116,7 @@ D                    >
     });
 
     return (
-        <main className="flex flex-col items-center w-full bg-gray-100 min-h-screenx">
+        <div className="flex flex-col items-center w-full bg-gray-100 min-h-screen">
             {/* Header */}
             <section className="w-full h-[25vh] bg-gradient-to-r from-pink-400 to-pink-500 flex flex-col justify-center items-center p-4">
                 <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 text-center">
@@ -134,6 +153,38 @@ D                    >
                 )
             }
 
+            {
+                showEditModal && (
+                    <ModalEditarCategoria
+                        categoria={selectedCategoria}
+                        closeModal={() => setShowEditModal(false)}
+                        onCategoriaUpdated={(categoriaEditada) => {
+                            setCategorias((prev) =>
+                                prev.map((cat) =>
+                                    cat._id === categoriaEditada._id ? categoriaEditada : cat
+                                )
+                            );
+                        }}
+                    />
+                )
+            }
+
+            {
+                showDeleteModal && (
+                    <ModalEliminarCategoria
+                        categoria={selectedCategoria}
+                        closeModal={() => setShowDeleteModal(false)}
+                        onCategoriaDeleted={(idEliminado) => {
+                            setCategorias((prev) =>
+                                prev.filter((cat) => cat._id !== idEliminado)
+                            );
+                        }}
+                    />
+                )
+            }
+
+
+
             {imagenModal && (
                 <ModalImagenCategoria
                     imageURL={imagenModal}
@@ -142,7 +193,7 @@ D                    >
             )}
 
 
-        </main>
+        </div>
 
     );
 }

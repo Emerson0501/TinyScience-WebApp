@@ -19,9 +19,11 @@ export async function GET(req, { params }) {
 export async function PUT(req, { params }) {
   try {
     await connectDB();
+    const { id } = await params;
+
     const body = await req.json();
 
-    const pinActualizado = await PinModel.findByIdAndUpdate(params.id, body, {
+    const pinActualizado = await PinModel.findByIdAndUpdate(id, body, {
       new: true,
     });
     if (!pinActualizado)
@@ -40,14 +42,24 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     await connectDB();
-    const pinEliminado = await PinModel.findByIdAndDelete(params.id);
-    if (!pinEliminado)
+
+    const { id } = await params;
+
+    const pinEliminado = await PinModel.findByIdAndUpdate(
+      id,
+      { isActive: false },
+      { new: true }
+    );
+
+    if (!pinEliminado) {
       return Response.json({ error: "Pin no encontrado" }, { status: 404 });
-    return Response.json({ message: "Pin eliminado con éxito" });
+    }
+
+    return Response.json({ message: "Pin desactivado con éxito" });
   } catch (error) {
-    console.error("❌ Error al eliminar el pin:", error.message);
+    console.error("❌ Error al desactivar el pin:", error.message);
     return Response.json(
-      { error: "Error al eliminar el pin" },
+      { error: "Error al desactivar el pin" },
       { status: 500 }
     );
   }

@@ -26,9 +26,10 @@ export async function PUT(req, { params }) {
   try {
     await connectDB();
     const body = await req.json();
+    const { id } = await params;
 
     const categoriaActualizada = await CategoriaModel.findByIdAndUpdate(
-      params.id,
+      id,
       body,
       {
         new: true,
@@ -53,19 +54,22 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     await connectDB();
-    const categoriaEliminada = await CategoriaModel.findByIdAndDelete(
-      params.id
+    const categoriaEliminada = await CategoriaModel.findByIdAndUpdate(
+      params.id,
+      { isActive: false },
+      { new: true }
     );
+
     if (!categoriaEliminada)
       return Response.json(
         { error: "Categoria no encontrada" },
         { status: 404 }
       );
-    return Response.json({ message: "Categoria eliminada con éxito" });
+    return Response.json({ message: "Categoria desactivada con éxito" });
   } catch (error) {
-    console.error("❌ Error al eliminar la categoria:", error.message);
+    console.error("❌ Error al desactivar la categoria:", error.message);
     return Response.json(
-      { error: "Error al eliminar la categoria" },
+      { error: "Error al desactivar la categoria" },
       { status: 500 }
     );
   }
