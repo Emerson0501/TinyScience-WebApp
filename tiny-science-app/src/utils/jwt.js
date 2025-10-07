@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import cookie from "cookie"; 
+export const runtime = 'nodejs';
 
 export function parseAuthCookie(cookieHeader) {
   if (!cookieHeader) return null;
@@ -11,7 +12,7 @@ export function verifyJwt(token) {
   try {
     return jwt.verify(token, process.env.JWT_SECRET);
   } catch (error) {
-    console.error("❌ Falló la verificación del JWT:", error.message);
+    console.error("Falló la verificación del JWT:", error.message);
     return null;
   }
 }

@@ -17,11 +17,12 @@ export default function Login() {
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        }); ``
+            body: JSON.stringify({ email, password }),
+            credentials: "include"
+        }); 
 
         if (response.ok) {
-            router.push('/'); // Redirect after successful login
+            router.push('/admin'); // Redirect after successful login
         } else {
             const data = await response.json();
             console.error(data.error);

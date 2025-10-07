@@ -116,7 +116,7 @@ export default function PinesAdmin() {
   return (
     <div className="flex flex-col items-center w-full bg-gray-100 min-h-screen">
       {/* Header */}
-      <section className="w-full h-[25vh] bg-pink-300 flex flex-col justify-center items-center p-4">
+      <section className="w-full h-[25vh] bg-pink-400 flex flex-col justify-center items-center p-4">
         <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 text-center">
           ADMINISTRAR PINES
         </h1>

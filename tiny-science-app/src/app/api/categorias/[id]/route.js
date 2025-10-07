@@ -54,8 +54,10 @@ export async function PUT(req, { params }) {
 export async function DELETE(req, { params }) {
   try {
     await connectDB();
+    const { id } = await params;
+
     const categoriaEliminada = await CategoriaModel.findByIdAndUpdate(
-      params.id,
+      id,
       { isActive: false },
       { new: true }
     );
