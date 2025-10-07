@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ImageUploader from "../../cloudinary/ImageUploader";
 import {
   faTimes,
   faTag,
@@ -20,11 +21,13 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
     stock: "",
     image: "",
     category: "",
+    file: null, 
   });
 
   const [categorias, setCategorias] = useState([]);
+  const [subiendo, setSubiendo] = useState(false);
 
-  // Prellenar con datos del pin recibido
+  // Prellenar con datos existentes
   useEffect(() => {
     if (pin) {
       setPinData({
@@ -34,11 +37,12 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
         stock: pin.stock || "",
         image: pin.image || "",
         category: pin.category?._id || pin.category || "",
+        file: null,
       });
     }
   }, [pin]);
 
-  // Cargar categorías para el select
+  // Cargar categorías
   useEffect(() => {
     const fetchCategorias = async () => {
       try {
@@ -53,35 +57,47 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
   }, []);
 
   const handleChange = (e) => {
-    setPinData({
-      ...pinData,
-      [e.target.name]: e.target.value,
-    });
+    setPinData({ ...pinData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
     try {
+      setSubiendo(true);
+      let imageUrl = pinData.image;
+
+      if (pinData.file) {
+        const formData = new FormData();
+        formData.append("file", pinData.file);
+        
+        const resUpload = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const uploadData = await resUpload.json();
+        imageUrl = uploadData.url;
+      }
+
       const res = await fetch(`/api/pines/${pin._id}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...pinData,
           price: Number(pinData.price),
           stock: Number(pinData.stock),
+          image: imageUrl,
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Error al actualizar el pin");
-      }
+      if (!res.ok) throw new Error("Error al actualizar el pin");
 
       const data = await res.json();
-      onPinUpdated(data); // ⚡ actualiza el pin en la lista
+      onPinUpdated(data);
       closeModal();
     } catch (error) {
       console.error("❌ Error editando pin:", error);
+    } finally {
+      setSubiendo(false);
     }
   };
 
@@ -126,7 +142,6 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
               <input
                 type="text"
                 name="name"
-                placeholder="Nombre del pin"
                 value={pinData.name}
                 onChange={handleChange}
                 className="w-full border text-black rounded p-2"
@@ -142,7 +157,6 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
               </label>
               <textarea
                 name="description"
-                placeholder="Descripción del pin"
                 value={pinData.description}
                 onChange={handleChange}
                 className="w-full border text-black rounded p-2"
@@ -159,7 +173,6 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
               <input
                 type="number"
                 name="price"
-                placeholder="0.00"
                 value={pinData.price}
                 onChange={handleChange}
                 className="w-full border text-black rounded p-2"
@@ -176,7 +189,6 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
               <input
                 type="number"
                 name="stock"
-                placeholder="Cantidad disponible"
                 value={pinData.stock}
                 onChange={handleChange}
                 className="w-full border text-black rounded p-2"
@@ -210,26 +222,26 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
             <div className="w-full mt-4">
               <label className="flex items-center text-sm font-medium text-gray-600 mb-1">
                 <FontAwesomeIcon icon={faImage} className="mr-2" />
-                URL de imagen
+                Imagen del Pin
               </label>
-              <input
-                type="text"
-                name="image"
-                placeholder="https://..."
-                value={pinData.image}
-                onChange={handleChange}
-                className="w-full border text-black rounded p-2"
+              <ImageUploader
+                onFileSelect={(file) =>
+                  setPinData((prev) => ({ ...prev, file }))
+                }
               />
             </div>
 
-            {/* Vista previa */}
-            {pinData.image && (
-              <img
-                src={pinData.image}
-                alt="Vista previa"
-                className="mt-4 max-h-40 rounded border"
-              />
+            {/* Vista previa solo si NO hay archivo nuevo */}
+            {!pinData.file && pinData.image && (
+              <div className="mt-3 flex justify-center">
+                <img
+                  src={pinData.image}
+                  alt="Vista previa actual"
+                  className="max-h-32 rounded-lg border border-pink-200 shadow-sm object-cover"
+                />
+              </div>
             )}
+
 
             {/* Botones */}
             <div className="flex space-x-4 mt-6">
@@ -240,10 +252,11 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
                 Cancelar
               </button>
               <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500"
                 onClick={handleSubmit}
+                disabled={subiendo}
               >
-                Guardar cambios
+                {subiendo ? "Guardando..." : "Guardar"}
               </button>
             </div>
           </div>

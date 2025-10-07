@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ImageUploader from '../../cloudinary/ImageUploader';
 import {
     faTimes,
     faTag,
@@ -20,11 +21,12 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
         stock: "",
         image: "",
         category: "",
+        file: null,
     });
 
     const [categorias, setCategorias] = useState([]);
+    const [subiendo, setSubiendo] = useState(false);
 
-    // Cargar categorías para el select
     useEffect(() => {
         const fetchCategorias = async () => {
             try {
@@ -47,6 +49,22 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
 
     const handleSubmit = async () => {
         try {
+            setSubiendo(true);
+            let imageUrl = pinData.image;
+
+            if (pinData.file) {
+                const formData = new FormData();
+                formData.append("file", pinData.file);
+
+                const resUpload = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+                const uploadData = await resUpload.json();
+                imageUrl = uploadData.url;
+            }
+
+
             const res = await fetch("/api/pines", {
                 method: "POST",
                 headers: {
@@ -56,6 +74,7 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
                     ...pinData,
                     price: Number(pinData.price),
                     stock: Number(pinData.stock),
+                    image: imageUrl,
                 }),
             });
 
@@ -197,17 +216,15 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
                         <div className="w-full mt-4">
                             <label className="flex items-center text-sm font-medium text-gray-600 mb-1">
                                 <FontAwesomeIcon icon={faImage} className="mr-2" />
-                                URL de imagen
+                                Imagen del Pin
                             </label>
-                            <input
-                                type="text"
-                                name="image"
-                                placeholder="https://..."
-                                value={pinData.image}
-                                onChange={handleChange}
-                                className="w-full border text-black rounded p-2"
+                            <ImageUploader
+                                onFileSelect={(file) =>
+                                    setPinData((prev) => ({ ...prev, file }))
+                                }
                             />
                         </div>
+
 
                         {/* Vista previa */}
                         {pinData.image && (
@@ -227,10 +244,11 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
                                 Cancelar
                             </button>
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500"
                                 onClick={handleSubmit}
+                                disabled={subiendo}
                             >
-                                Agregar
+                                {subiendo ? "Subiendo..." : "Agregar"}
                             </button>
                         </div>
                     </div>

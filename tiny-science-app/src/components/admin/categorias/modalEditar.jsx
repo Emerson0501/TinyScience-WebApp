@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTag, faImage, faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import ImageUploader from '../../cloudinary/ImageUploader';
 
 const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => {
     const [categoriaData, setCategoriaData] = useState({
         name: "",
         description: "",
         image: "",
+        file: null,
     });
+    const [subiendo, setSubiendo] = useState(false);
 
     // Inicializar con los datos recibidos
     useEffect(() => {
@@ -18,6 +21,7 @@ const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => 
                 name: categoria.name || "",
                 description: categoria.description || "",
                 image: categoria.image || "",
+                file: null
             });
         }
     }, [categoria]);
@@ -31,10 +35,30 @@ const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => 
 
     const handleSubmit = async () => {
         try {
+
+            setSubiendo(true);
+            let imageUrl = categoriaData.image;
+
+            if (categoriaData.file) {
+                const formData = new FormData();
+                formData.append("file", categoriaData.file);
+
+                const resUpload = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const uploadData = await resUpload.json();
+                imageUrl = uploadData.url;
+            }
+
             const res = await fetch(`/api/categorias/${categoria._id}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(categoriaData),
+                body: JSON.stringify({
+                    ...categoriaData,
+                    image: imageUrl,
+                }),
             });
 
             if (!res.ok) throw new Error("Error al actualizar la categoría");
@@ -110,23 +134,21 @@ const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => 
                             />
                         </div>
 
-                        {/* Campo Imagen */}
+                        {/* Imagen */}
                         <div className="w-full mt-4">
                             <label className="flex items-center text-sm font-medium text-gray-600 mb-1">
                                 <FontAwesomeIcon icon={faImage} className="mr-2" />
-                                URL de imagen
+                                Imagen de la categoria
                             </label>
-                            <input
-                                type="text"
-                                name="image"
-                                value={categoriaData.image}
-                                onChange={handleChange}
-                                className="w-full border text-black rounded p-2"
+                            <ImageUploader
+                                onFileSelect={(file) =>
+                                    setCategoriaData((prev) => ({ ...prev, file }))
+                                }
                             />
                         </div>
 
                         {/* Vista previa */}
-                        {categoriaData.image && (
+                        {!categoriaData.file && categoriaData.image && (
                             <img
                                 src={categoriaData.image}
                                 alt="Vista previa"
@@ -143,10 +165,11 @@ const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => 
                                 Cancelar
                             </button>
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500"
                                 onClick={handleSubmit}
+                                disabled={subiendo}
                             >
-                                Guardar cambios
+                                {subiendo ? "Guardando..." : "Guardar"}
                             </button>
                         </div>
                     </div>

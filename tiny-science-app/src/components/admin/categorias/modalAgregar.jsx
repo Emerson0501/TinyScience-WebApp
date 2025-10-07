@@ -2,13 +2,17 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTag, faImage, faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import ImageUploader from '../../cloudinary/ImageUploader';
 
 const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
     const [categoriaData, setCategoriaData] = useState({
         name: "",
         description: "",
-        image: ""
+        image: "",
+        file: null,
     });
+
+    const [subiendo, setSubiendo] = useState(false);
 
     const handleChange = (e) => {
         setCategoriaData({
@@ -19,13 +23,34 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
 
     const handleSubmit = async () => {
         try {
+
+            setSubiendo(true);
+            let imageUrl = categoriaData.image;
+
+            if (categoriaData.file) {
+                const formData = new FormData();
+                formData.append("file", categoriaData.file);
+
+                const resUpload = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const uploadData = await resUpload.json();
+                imageUrl = uploadData.url;
+            }
+
+
             const res = await fetch("/api/categorias",
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(categoriaData),
+                    body: JSON.stringify({
+                        ...categoriaData,
+                        image: imageUrl,
+                    }),
                 })
 
             if (!res.ok) {
@@ -53,7 +78,8 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.95, opacity: 0 }}
                     transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="w-full max-w-md bg-white rounded-xl shadow-xl p-6 relative"
+                    className="w-full max-w-md h-[80vh] bg-white rounded-xl shadow-xl relative 
+                 overflow-y-auto p-6"
                 >
                     {/* Botón Cerrar */}
                     <button
@@ -105,19 +131,16 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                             />
                         </div>
 
-                        {/* Campo URL de Imagen */}
+                        {/* Imagen */}
                         <div className="w-full mt-4">
                             <label className="flex items-center text-sm font-medium text-gray-600 mb-1">
                                 <FontAwesomeIcon icon={faImage} className="mr-2" />
-                                URL de imagen
+                                Imagen de la categoria
                             </label>
-                            <input
-                                type="text"
-                                name="image"
-                                placeholder="https://..."
-                                value={categoriaData.image}
-                                onChange={handleChange}
-                                className="w-full border text-black rounded p-2"
+                            <ImageUploader
+                                onFileSelect={(file) =>
+                                    setCategoriaData((prev) => ({ ...prev, file }))
+                                }
                             />
                         </div>
 
@@ -139,10 +162,11 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                                 Cancelar
                             </button>
                             <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                className="bg-pink-400 text-white px-4 py-2 rounded hover:bg-pink-500"
                                 onClick={handleSubmit}
+                                disabled={subiendo}
                             >
-                                Agregar
+                                {subiendo ? "Subiendo..." : "Agregar"}
                             </button>
                         </div>
                     </div>
