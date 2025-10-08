@@ -107,7 +107,7 @@ export default function SidebarMobile({ onLogout }) {
                                 </li>
                                 <li>
                                     <Link
-                                        href="#"
+                                        href="/admin/categorias/visualizar"
                                         onClick={() => setIsOpen(false)}
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >
@@ -157,7 +157,7 @@ export default function SidebarMobile({ onLogout }) {
                                 </li>
                                 <li>
                                     <Link
-                                        href="#"
+                                        href="/admin/pines/visualizar"
                                         onClick={() => setIsOpen(false)}
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >

@@ -99,7 +99,7 @@ export default function SidebarDesktop({onLogout}) {
                     <li>
                         <button
                             onClick={() => setCategoriasOpen(!categoriasOpen)}
-                            className="flex items-center justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
+                            className="flex items-center cursor-pointer justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                         >
                             <div className="flex items-center gap-3">
                                 <AppWindow size={18} className="flex-shrink-0 min-w-[20px]" />
@@ -148,7 +148,7 @@ export default function SidebarDesktop({onLogout}) {
                     <li>
                         <button
                             onClick={() => setPinesOpen(!pinesOpen)}
-                            className="flex items-center justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
+                            className="flex items-center cursor-pointer justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                         >
                             <div className="flex items-center gap-3">
                                 <AppWindow size={18} className="flex-shrink-0 min-w-[20px]" />
@@ -180,7 +180,7 @@ export default function SidebarDesktop({onLogout}) {
                                 </li>
                                 <li>
                                     <Link
-                                        href="#"
+                                        href="/admin/pines/visualizar"
                                         className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                                     >
                                         <Calendar size={18} className="flex-shrink-0 min-w-[20px]" />
@@ -226,7 +226,7 @@ export default function SidebarDesktop({onLogout}) {
                 <div className="mt-auto">
                     <button
                         onClick={onLogout}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-500 transition w-full text-left"
+                        className="flex items-center cursor-pointer gap-3 px-3 py-2 rounded-lg hover:bg-red-500 transition w-full text-left"
                     >
                         <LogOut size={18} className="flex-shrink-0 min-w-[20px]" />
                         <span
