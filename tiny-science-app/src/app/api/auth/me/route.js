@@ -1,4 +1,4 @@
-export const runtime = 'nodejs'; 
+export const runtime = "nodejs";
 
 import { NextResponse } from "next/server";
 import { connectDB } from "@/utils/db";
@@ -8,7 +8,7 @@ import { UserModel } from "@/domain/entities/usuario";
 export async function GET(request) {
   try {
     await connectDB();
-    const token = parseAuthCookie(request.headers.get("cookie"));
+    const token = request.cookies.get("authToken")?.value || null;
 
     if (!token) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });

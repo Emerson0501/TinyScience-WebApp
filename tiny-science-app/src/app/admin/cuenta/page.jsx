@@ -8,8 +8,9 @@ export default function Cuenta() {
     useEffect(() => {
         const fetchUsuario = async () => {
             try {
-                const res = await fetch("/api/auth/me");
-                const data = await res.json();
+                const res = await fetch("/api/auth/me", {
+                    credentials: "include",
+                }); const data = await res.json();
                 setUsuario(data.user);
             } catch (error) {
                 console.error("Error al cargar la información del usuario:", error);
