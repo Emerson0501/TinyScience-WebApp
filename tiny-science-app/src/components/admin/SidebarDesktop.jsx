@@ -4,18 +4,16 @@ import Link from "next/link";
 import {
     Home,
     User,
-    Bell,
-    AppWindow,
-    ShoppingBag,
-    LogIn,
     LogOut,
-    Mail,
-    Calendar,
-    ChevronDown,
     Menu,
+    ChevronDown,
+    Tags,
+    ClipboardList,
+    Eye,
+    Pin
 } from "lucide-react";
 
-export default function SidebarDesktop({onLogout}) {
+export default function SidebarDesktop({ onLogout }) {
     const [isOpen, setIsOpen] = useState(true);
     const [pinesOpen, setPinesOpen] = useState(false);
     const [categoriasOpen, setCategoriasOpen] = useState(false);
@@ -65,7 +63,7 @@ export default function SidebarDesktop({onLogout}) {
 
                     <li>
                         <Link
-                            href="#"
+                            href="admin/cuenta"
                             className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                         >
                             <User size={18} className="flex-shrink-0 min-w-[20px]" />
@@ -78,7 +76,7 @@ export default function SidebarDesktop({onLogout}) {
                         </Link>
                     </li>
 
-                    <li>
+                    {/* <li>
                         <Link
                             href="/admin/categorias"
                             className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
@@ -91,7 +89,7 @@ export default function SidebarDesktop({onLogout}) {
                                 Categorías
                             </span>
                         </Link>
-                    </li>
+                    </li> */}
 
 
 
@@ -102,7 +100,7 @@ export default function SidebarDesktop({onLogout}) {
                             className="flex items-center cursor-pointer justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                         >
                             <div className="flex items-center gap-3">
-                                <AppWindow size={18} className="flex-shrink-0 min-w-[20px]" />
+                                <Tags size={18} className="flex-shrink-0 min-w-[20px]" />
                                 <span
                                     className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
                                         }`}
@@ -125,7 +123,7 @@ export default function SidebarDesktop({onLogout}) {
                                         href="/admin/categorias"
                                         className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                                     >
-                                        <Mail size={18} className="flex-shrink-0 min-w-[20px]" />
+                                        <ClipboardList size={18} className="flex-shrink-0 min-w-[20px]" />
                                         <span>Administrar</span>
                                     </Link>
                                 </li>
@@ -134,7 +132,7 @@ export default function SidebarDesktop({onLogout}) {
                                         href="/admin/categorias/visualizar"
                                         className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                                     >
-                                        <Calendar size={18} className="flex-shrink-0 min-w-[20px]" />
+                                        <Eye size={18} className="flex-shrink-0 min-w-[20px]" />
                                         <span>Visualizar</span>
                                     </Link>
                                 </li>
@@ -151,7 +149,7 @@ export default function SidebarDesktop({onLogout}) {
                             className="flex items-center cursor-pointer justify-between w-full px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                         >
                             <div className="flex items-center gap-3">
-                                <AppWindow size={18} className="flex-shrink-0 min-w-[20px]" />
+                                <Pin size={18} className="flex-shrink-0 min-w-[20px]" />
                                 <span
                                     className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${isOpen ? "opacity-100 w-auto" : "opacity-0 w-0"
                                         }`}
@@ -174,7 +172,7 @@ export default function SidebarDesktop({onLogout}) {
                                         href="/admin/pines"
                                         className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                                     >
-                                        <Mail size={18} className="flex-shrink-0 min-w-[20px]" />
+                                        <ClipboardList size={18} className="flex-shrink-0 min-w-[20px]" />
                                         <span>Administrar</span>
                                     </Link>
                                 </li>
@@ -183,14 +181,14 @@ export default function SidebarDesktop({onLogout}) {
                                         href="/admin/pines/visualizar"
                                         className="flex items-center gap-3 px-3.5 py-2 rounded-lg hover:bg-white/20 transition"
                                     >
-                                        <Calendar size={18} className="flex-shrink-0 min-w-[20px]" />
+                                        <Eye size={18} className="flex-shrink-0 min-w-[20px]" />
                                         <span>Visualizar</span>
                                     </Link>
                                 </li>
                             </ul>
                         )}
                     </li>
-
+                    {/* 
                     <li>
                         <Link
                             href="#"
@@ -204,7 +202,7 @@ export default function SidebarDesktop({onLogout}) {
                                 Product
                             </span>
                         </Link>
-                    </li>
+                    </li> */}
 
                     {/* <li>
                         <Link

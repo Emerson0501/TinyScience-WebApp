@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function POST(request) {
-  const response = NextResponse.json({ message: "Logout exitoso" });
+  const response = NextResponse.json({ message: "Sesión cerrada exitosamente" });
 
   response.cookies.set("authToken", "", {
     httpOnly: true,

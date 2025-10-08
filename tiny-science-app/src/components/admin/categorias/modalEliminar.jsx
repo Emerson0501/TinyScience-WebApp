@@ -2,6 +2,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 
 const ModalEliminarCategoria = ({ categoria, closeModal, onCategoriaDeleted }) => {
   const handleDelete = async () => {
@@ -10,10 +11,15 @@ const ModalEliminarCategoria = ({ categoria, closeModal, onCategoriaDeleted }) =
         method: "DELETE",
       });
 
-      if (!res.ok) throw new Error("Error al eliminar la categoría");
-
       const data = await res.json();
-      onCategoriaDeleted(categoria._id); 
+      if (!res.ok) {
+        toast.error(data.error || "Error al eliminar la categoría");
+        throw new Error(data.error);
+      }
+
+      toast.success(data.message || "Categoría eliminada con éxito");
+
+      onCategoriaDeleted(categoria._id);
       closeModal();
     } catch (error) {
       console.error("❌ Error al eliminar categoría:", error);

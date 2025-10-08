@@ -4,14 +4,13 @@ import Link from "next/link";
 import {
     Home,
     User,
-    Bell,
-    AppWindow,
-    ShoppingBag,
     LogOut,
-    Mail,
-    Calendar,
-    ChevronDown,
     Menu,
+    ChevronDown,
+    Tags,
+    ClipboardList,
+    Eye,
+    Pin
 } from "lucide-react";
 
 export default function SidebarMobile({ onLogout }) {
@@ -60,7 +59,7 @@ export default function SidebarMobile({ onLogout }) {
                     {/* Cuenta */}
                     <li>
                         <Link
-                            href="#"
+                            href="/admin/cuenta"
                             onClick={() => setIsOpen(false)}
                             className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                         >
@@ -78,7 +77,7 @@ export default function SidebarMobile({ onLogout }) {
                             className="flex items-center justify-between w-full px-2 py-2 hover:bg-pink-300 rounded-md transition"
                         >
                             <div className="flex items-center gap-2">
-                                <Bell size={18} />
+                                <Tags size={18} />
                                 <span>Categorías</span>
                             </div>
                             <ChevronDown
@@ -100,7 +99,7 @@ export default function SidebarMobile({ onLogout }) {
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <Mail size={16} />
+                                            <ClipboardList size={16} />
                                             <span>Administrar</span>
                                         </div>
                                     </Link>
@@ -112,7 +111,7 @@ export default function SidebarMobile({ onLogout }) {
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <Calendar size={16} />
+                                            <Eye size={16} />
                                             <span>Visualizar</span>
                                         </div>
                                     </Link>
@@ -128,7 +127,7 @@ export default function SidebarMobile({ onLogout }) {
                             className="flex items-center justify-between w-full px-2 py-2 hover:bg-pink-300 rounded-md transition"
                         >
                             <div className="flex items-center gap-2">
-                                <AppWindow size={18} />
+                                <Pin size={18} />
                                 <span>Pines</span>
                             </div>
                             <ChevronDown
@@ -150,7 +149,7 @@ export default function SidebarMobile({ onLogout }) {
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <Mail size={16} />
+                                            <ClipboardList size={16} />
                                             <span>Administrar</span>
                                         </div>
                                     </Link>
@@ -162,7 +161,7 @@ export default function SidebarMobile({ onLogout }) {
                                         className="block px-2 py-2 hover:bg-pink-300 rounded-md transition"
                                     >
                                         <div className="flex items-center gap-2">
-                                            <Calendar size={16} />
+                                            <Eye size={16} />
                                             <span>Visualizar</span>
                                         </div>
                                     </Link>
@@ -172,7 +171,7 @@ export default function SidebarMobile({ onLogout }) {
                     </li>
 
                     {/* Product */}
-                    <li>
+                    {/* <li>
                         <Link
                             href="#"
                             onClick={() => setIsOpen(false)}
@@ -183,7 +182,7 @@ export default function SidebarMobile({ onLogout }) {
                                 <span>Product</span>
                             </div>
                         </Link>
-                    </li>
+                    </li> */}
 
                     {/* Sign Out */}
                     <li className="border-t border-pink-300 pt-3">

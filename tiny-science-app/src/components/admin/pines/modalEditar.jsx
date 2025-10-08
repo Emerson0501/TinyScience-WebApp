@@ -12,6 +12,7 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 
 const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
   const [pinData, setPinData] = useState({
@@ -21,7 +22,7 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
     stock: "",
     image: "",
     category: "",
-    file: null, 
+    file: null,
   });
 
   const [categorias, setCategorias] = useState([]);
@@ -68,7 +69,7 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
       if (pinData.file) {
         const formData = new FormData();
         formData.append("file", pinData.file);
-        
+
         const resUpload = await fetch("/api/upload", {
           method: "POST",
           body: formData,
@@ -89,13 +90,19 @@ const ModalEditarPin = ({ pin, closeModal, onPinUpdated }) => {
         }),
       });
 
-      if (!res.ok) throw new Error("Error al actualizar el pin");
-
       const data = await res.json();
-      onPinUpdated(data);
+
+      if (!res.ok) {
+        toast.error(data.error || "Error al actualizar el pin");
+        throw new Error(data.error);
+      }
+
+      toast.success(data.message || "Error al actualizar el pin");
+      onPinUpdated(data.pinActualizado);
       closeModal();
     } catch (error) {
-      console.error("❌ Error editando pin:", error);
+      console.error("Error editando pin:", error);
+      toast.error(data.error || "Error al actualizar el pin");
     } finally {
       setSubiendo(false);
     }

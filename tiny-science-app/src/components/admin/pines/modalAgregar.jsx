@@ -12,6 +12,7 @@ import {
     faList,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "react-toastify";
 
 const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
     const [pinData, setPinData] = useState({
@@ -78,15 +79,25 @@ const ModalAgregarPin = ({ closeModal, onPinAdded }) => {
                 }),
             });
 
+            const data = await res.json();
+
             if (!res.ok) {
-                throw new Error("Error al crear el pin");
+                toast.error(data.error || "Error al crear el pin, revisa los datos ingresados");
+                throw new Error(data.error);
+            }
+            if (data.reactivado) {
+                onPinUpdated(data.pin); // si ya existía, reemplaza en tabla
+            } else {
+                onPinAdded(data.pin); // si es nuevo, lo agrega
             }
 
-            const data = await res.json();
-            onPinAdded(data);
+            toast.success(data.message || "Pin creado con éxito");
             closeModal();
         } catch (error) {
-            console.error("Error creando pin:", error);
+            // console.error("Error creando pin:", error);
+            toast.error("Error al crear el pin");
+        } finally {
+            setSubiendo(false)
         }
     };
 

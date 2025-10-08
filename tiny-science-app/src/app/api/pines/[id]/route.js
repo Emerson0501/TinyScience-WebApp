@@ -25,11 +25,16 @@ export async function PUT(req, { params }) {
 
     const pinActualizado = await PinModel.findByIdAndUpdate(id, body, {
       new: true,
-    });
-    if (!pinActualizado)
-      return Response.json({ error: "Pin no encontrado" }, { status: 404 });
+    }).populate("category");
 
-    return Response.json(pinActualizado);
+    if (!pinActualizado) {
+      return Response.json({ error: "Pin no encontrado" }, { status: 404 });
+    }
+
+    return Response.json(
+      { message: "Pin actualizado con éxito", pin: pinActualizado },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("❌ Error al actualizar el pin:", error.message);
     return Response.json(
@@ -54,8 +59,10 @@ export async function DELETE(req, { params }) {
     if (!pinEliminado) {
       return Response.json({ error: "Pin no encontrado" }, { status: 404 });
     }
-
-    return Response.json({ message: "Pin desactivado con éxito" });
+    return Response.json(
+      { message: "Pin desactivado con éxito", pin: pinEliminado },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("❌ Error al desactivar el pin:", error.message);
     return Response.json(

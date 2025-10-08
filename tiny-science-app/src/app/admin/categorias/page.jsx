@@ -35,15 +35,6 @@ export default function CategoriaAdmin() {
     }, []);
 
 
-
-    const handleEdit = (id) => {
-        console.log("Editar categoría con id:", id);
-    };
-
-    const handleDeleteClick = (categoria) => {
-        console.log("Eliminar categoría:", categoria);
-    };
-
     const columns = useMemo(() => [
         {
             accessorKey: "name",
@@ -118,7 +109,7 @@ export default function CategoriaAdmin() {
     return (
         <div className="flex flex-col items-center w-full bg-gray-100 min-h-screen">
             {/* Header */}
-            <section className="w-full h-[25vh] bg-gradient-to-r from-pink-400 to-pink-500 flex flex-col justify-center items-center p-4">
+            <section className="w-full h-[25vh] bg-rose-200 flex flex-col justify-center items-center p-4">
                 <h1 className="text-2xl md:text-3xl text-white font-bold mb-4 text-center">
                     ADMINISTRAR CATEGORÍAS
                 </h1>

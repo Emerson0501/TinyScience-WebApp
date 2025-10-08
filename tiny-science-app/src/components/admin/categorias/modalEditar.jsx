@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTag, faImage, faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUploader from '../../cloudinary/ImageUploader';
+import { toast } from "react-toastify";
 
 const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => {
     const [categoriaData, setCategoriaData] = useState({
@@ -60,14 +61,21 @@ const ModalEditarCategoria = ({ categoria, closeModal, onCategoriaUpdated }) => 
                     image: imageUrl,
                 }),
             });
-
-            if (!res.ok) throw new Error("Error al actualizar la categoría");
-
             const data = await res.json();
-            onCategoriaUpdated(data);
+
+            if (!res.ok) {
+                toast.error(data.error || "Error al actualizar la categoría");
+                throw new Error(data.error);
+            }
+
+            toast.success(data.message || "Categoría actualizada con éxito");
+            onCategoriaUpdated(data.categoria);
             closeModal();
         } catch (error) {
-            console.error("❌ Error actualizando la categoría:", error);
+            toast.error(data.error || "Error al actualizar la categoría");
+            console.error("Error actualizando la categoria:", error);
+        } finally {
+            setSubiendo(false);
         }
     };
 

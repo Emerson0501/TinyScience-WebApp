@@ -12,12 +12,12 @@ export async function POST(request) {
 
   const user = await UserModel.findOne({ email });
   if (!user) {
-    return NextResponse.json({ error: "Usuario no existe" }, { status: 401 });
+    return NextResponse.json({ error: "Credenciales Incorrectas" }, { status: 401 });
   }
   const isPasswordValid = await compare(password, user.password);
   if (!isPasswordValid) {
     return NextResponse.json(
-      { error: "Contraseña incorrecta" },
+      { error: "Credenciales incorrectas" },
       { status: 401 }
     );
   }
@@ -34,7 +34,7 @@ export async function POST(request) {
   );
 
   // Guardar token en cookie httpOnly
-  const response = NextResponse.json({ message: "Login exitoso" });
+  const response = NextResponse.json({ message: "Inicio de sesión exitoso" });
 
   response.cookies.set("authToken", token, {
     httpOnly: true,

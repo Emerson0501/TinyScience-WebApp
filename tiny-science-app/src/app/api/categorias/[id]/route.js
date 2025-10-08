@@ -1,5 +1,4 @@
 import { connectDB } from "@/utils/db";
-
 import { CategoriaModel } from "@/domain/entities/categoria";
 
 export async function GET(req, { params }) {
@@ -41,7 +40,13 @@ export async function PUT(req, { params }) {
         { status: 404 }
       );
 
-    return Response.json(categoriaActualizada);
+    return Response.json(
+      {
+        message: "Categoría actualizada con éxito",
+        categoria: categoriaActualizada,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("❌ Error al actualizar la categoria:", error.message);
     return Response.json(

@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faTag, faImage, faAlignLeft } from "@fortawesome/free-solid-svg-icons";
 import { motion, AnimatePresence } from "framer-motion";
 import ImageUploader from '../../cloudinary/ImageUploader';
+import { toast } from "react-toastify";
 
 const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
     const [categoriaData, setCategoriaData] = useState({
@@ -53,15 +54,20 @@ const ModalAgregarCategoria = ({ closeModal, onCategoriaAdded }) => {
                     }),
                 })
 
-            if (!res.ok) {
-                throw new Error("Error al crear la categoría")
-            }
-
             const data = await res.json();
-            onCategoriaAdded(data)
+
+            if (!res.ok) {
+                toast.error(data.error || "Error al crear la categoría");
+                throw new Error(data.error);
+            }
+            onCategoriaAdded(data.categoria)
+            toast.success(data.message || "Categoria creada exitosamente");
             closeModal();
         } catch (error) {
-            console.error("Error creando la materia:", error);
+            toast.error(data.error || "Error al crear la categoría");
+            console.error("Error creando la categoria:", error);
+        } finally {
+            setSubiendo(false);
         }
     }
 

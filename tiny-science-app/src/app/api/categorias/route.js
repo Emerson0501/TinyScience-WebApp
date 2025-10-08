@@ -34,10 +34,14 @@ export async function POST(req) {
         categoriaExistente.image = body.image || categoriaExistente.image;
         await categoriaExistente.save();
 
-        return Response.json(categoriaExistente, { status: 200 });
+        return Response.json(
+          {
+            message: "Categoría reactivada y actualizada con éxito",
+            categoria: categoriaExistente,
+          },
+          { status: 200 }
+        );
       } else {
-        z;
-        console.log("Ya existe");
         return Response.json(
           { error: "La categoría ya existe" },
           { status: 409 }
@@ -46,11 +50,14 @@ export async function POST(req) {
     }
 
     const categoriaNueva = await CategoriaModel.create(body);
-    return Response.json(categoriaNueva, { status: 201 });
-  } catch (error) {
-    console.error("❌ Error al crear la categoria:", error.message);
     return Response.json(
-      { error: "Error al crear la categoria" },
+      { message: "Categoría creada con éxito", categoria: categoriaNueva },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("❌ Error al crear la categoría:", error.message);
+    return Response.json(
+      { error: "Error al crear la categoría" },
       { status: 500 }
     );
   }

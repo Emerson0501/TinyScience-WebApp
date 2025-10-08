@@ -34,8 +34,15 @@ export async function POST(req) {
         pinExistente.category = body.category || pinExistente.category;
 
         await pinExistente.save();
+        const pinReactivado = await PinModel.findById(
+          pinExistente._id
+        ).populate("category");
+
         return Response.json(
-          { message: "Pin reactivado y actualizado", pin: pinExistente },
+          {
+            message: "Pin reactivado y actualizado con éxito",
+            pin: pinReactivado,
+          },
           { status: 200 }
         );
       } else {
@@ -47,9 +54,16 @@ export async function POST(req) {
     }
 
     const pinNuevo = await PinModel.create(body);
-    return Response.json(pinNuevo, { status: 201 });
+    const pinCreado = await PinModel.findById(pinNuevo._id).populate(
+      "category"
+    );
+
+    return Response.json(
+      { message: "Pin creado con éxito", pin: pinCreado },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("❌ Error al crear el pin:", error.message);
-    return Response.json({ error: "Error al crear el pin" }, { status: 500 });
+    // console.error("❌ Error al crear el pin:", error.message);
+    return Response.json({ error: "Error al crear el pin, pueden haber datos faltantes" }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import ParticlesBackground from '@/components/ParticlesBackground';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 export default function Login() {
 
@@ -14,18 +15,24 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password }),
-            credentials: "include"
-        }); 
-
-        if (response.ok) {
-            router.push('/admin'); // Redirect after successful login
-        } else {
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+                credentials: "include"
+            });
             const data = await response.json();
-            console.error(data.error);
+
+            if (response.ok) {
+                toast.success(data.message || 'Inicio de sesión exitoso');
+                router.push('/admin');
+            } else {
+                toast.error(data.error || 'Error al iniciar sesión');
+            }
+        } catch (error) {
+            toast.error('Error de conexión con el servidor');
+            console.error(error);
         }
     };
 
@@ -70,7 +77,7 @@ export default function Login() {
                                 className="w-full px-4 py-2 rounded-md border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF70F0] transition"
                             />
                         </div>
-                           <div className="relative">
+                        <div className="relative">
                             <label className="block text-gray-700 text-sm font-medium mb-1">
                                 Contraseña
                             </label>
@@ -87,12 +94,12 @@ export default function Login() {
                                 className="absolute right-3 top-9 cursor-pointer text-sm text-gray-500"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? <FaEyeSlash/> : <FaEye/> }
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
                             </span>
                         </div>
                         <button
                             type="submit"
-                            className="w-full py-2 rounded-md text-white font-semibold bg-gradient-to-r from-[#FF69B4] via-[#FF867C] to-[#FF70F0] hover:scale-105 transition-transform shadow-md"
+                            className="w-full py-2 rounded-md text-white font-semibold bg-pink-400 hover:scale-105 transition-transform shadow-md"
                         >
                             Iniciar sesión
                         </button>

@@ -37,7 +37,7 @@ export async function middleware(request) {
   if (pathname === "/login" && token) {
     const payload = await verifyJwt(token);
     if (payload) {
-      return NextResponse.redirect(new URL("/", request.url));
+      return NextResponse.redirect(new URL("/admin", request.url));
     }
   }
 

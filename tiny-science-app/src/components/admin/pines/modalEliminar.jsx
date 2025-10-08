@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { toast  } from "react-toastify";
 
 export default function ModalEliminarPin({ pin, closeModal, onPinDeleted }) {
   const handleDelete = async () => {
@@ -10,15 +11,19 @@ export default function ModalEliminarPin({ pin, closeModal, onPinDeleted }) {
         method: "DELETE",
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        throw new Error("Error al eliminar el pin");
+        toast.error(data.error || "Error al desactivar el pin");
+        throw new Error(data.error);
       }
 
-      const data = await res.json();
-      onPinDeleted(data); // notificar al padre para refrescar la tabla
+      toast.success(data.message || "Pin desactivado con éxito");
+      onPinDeleted(data);
       closeModal();
     } catch (error) {
-      console.error("❌ Error eliminando el pin:", error);
+      console.error(" Error eliminando el pin:", error);
+      toast.error("Error al eliminar el pin ");
     }
   };
 
@@ -55,7 +60,7 @@ export default function ModalEliminarPin({ pin, closeModal, onPinDeleted }) {
             </h2>
             <p className="text-center text-gray-600">
               ¿Estás seguro de que deseas eliminar el pin{" "}
-              <span className="font-semibold">{pin?.name}</span>?  
+              <span className="font-semibold">{pin?.name}</span>?
               Esta acción no se puede deshacer.
             </p>
 
